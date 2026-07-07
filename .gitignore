@@ -1,0 +1,28 @@
+# Secrets & environment variables
+.env
+srcs/.env
+secrets/
+*.pem
+*.key
+
+# Docker volumes / persistent data (if stored locally)
+data/
+srcs/data/
+mariadb/
+wordpress/
+
+# VM / Vagrant (if you're using one)
+.vagrant/
+*.box
+
+# OS-specific junk
+.DS_Store
+Thumbs.db
+
+# Editor/IDE clutter
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
