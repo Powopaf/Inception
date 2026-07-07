@@ -1,24 +1,13 @@
-# Secrets & environment variables
 srcs/.env
 secrets/*.txt
 secrets/*.pem
 secrets/*.key
-
-# Docker persistent data (only if you ever bind-mount locally for quick testing)
 /data/
-
-# VM / Vagrant (only relevant if you use Vagrant instead of raw QEMU)
 .vagrant/
 *.box
-
-# OS-specific junk
 .DS_Store
 Thumbs.db
-
-# Editor/IDE clutter
 .vscode/
 .idea/
 *.swp
-
-# Logs
 *.log
