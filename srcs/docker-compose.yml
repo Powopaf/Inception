@@ -45,13 +45,13 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/pifourni/data/mariadb
+      device: /home/paf/data/mariadb
   wp_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/pifourni/data/wordpress
+      device: /home/paf/data/wordpress
 
 secrets:
   db_password:
