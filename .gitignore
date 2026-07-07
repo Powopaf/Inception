@@ -1,17 +1,13 @@
 # Secrets & environment variables
-.env
 srcs/.env
-secrets/
-*.pem
-*.key
+secrets/*.txt
+secrets/*.pem
+secrets/*.key
 
-# Docker volumes / persistent data (if stored locally)
-data/
-srcs/data/
-mariadb/
-wordpress/
+# Docker persistent data (only if you ever bind-mount locally for quick testing)
+/data/
 
-# VM / Vagrant (if you're using one)
+# VM / Vagrant (only relevant if you use Vagrant instead of raw QEMU)
 .vagrant/
 *.box
 
