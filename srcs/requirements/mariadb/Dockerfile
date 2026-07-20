@@ -9,7 +9,11 @@ RUN curl -LsSO https://r.mariadb.com/downloads/mariadb_repo_setup | bash
 RUN apt-get -y update \
   && apt-get -y install mariadb-server mariadb-client
 
-RUN useradd db
-USER db
+EXPOSE 3306 
 
-CMD ["/bin/bash"]
+RUN mkdir -p /var/lib/mysql /var/run/mysqld \
+  && chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
+
+USER mysql
+
+CMD ["mariadbd"]
