@@ -9,11 +9,11 @@ DB_PASSWORD_FILE=/run/secrets/db_password
 DB_ROOT_PASSWORD_FILE=/run/secrets/db_root_password
 
 if [ -f "$DB_PASSWORD_FILE" ]; then
-    MYSQL_PASSWORD=$(cat "$DB_PASSWORD_FILE")
+    MYSQL_PASSWORD=$(tr -d '\r\n' < "$DB_PASSWORD_FILE")
 fi
 
 if [ -f "$DB_ROOT_PASSWORD_FILE" ]; then
-    MYSQL_ROOT_PASSWORD=$(cat "$DB_ROOT_PASSWORD_FILE")
+    MYSQL_ROOT_PASSWORD=$(tr -d '\r\n' < "$DB_ROOT_PASSWORD_FILE")
 fi
 
 mkdir -p "$DB_DIR" "$SOCKET_DIR"
@@ -26,14 +26,14 @@ fi
 mariadbd --user=mysql --datadir="$DB_DIR" --socket="$SOCKET_PATH" --bind-address=0.0.0.0 &
 pid="$!"
 
-until mariadb-admin ping --socket="$SOCKET_PATH" --silent; do
+until mariadb-admin --no-defaults --protocol=SOCKET --socket="$SOCKET_PATH" ping --silent; do
     sleep 1
 done
 
 if [ -n "${MYSQL_DATABASE:-}" ] && \
     [ -n "${MYSQL_USER:-}" ] && \
     [ -n "${MYSQL_PASSWORD:-}" ]; then
-    mariadb -uroot --socket="$SOCKET_PATH" <<EOSQL
+    mariadb --no-defaults --protocol=SOCKET --socket="$SOCKET_PATH" -uroot <<EOSQL
 CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
 CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
 GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
@@ -42,7 +42,7 @@ EOSQL
 fi
 
 if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
-    mariadb -uroot --socket="$SOCKET_PATH" <<EOSQL
+    mariadb --no-defaults --protocol=SOCKET --socket="$SOCKET_PATH" -uroot <<EOSQL
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
 EOSQL

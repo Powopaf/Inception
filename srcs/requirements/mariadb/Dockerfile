@@ -14,6 +14,6 @@ EXPOSE 3306
 RUN mkdir -p /var/lib/mysql /var/run/mysqld \
   && chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
 
-COPY tools/setupMariaDB.sh /usr/local/bin/setupMariaDB.sh
+COPY mariadb/tools/setupMariaDB.sh /usr/local/bin/setupMariaDB.sh
 RUN chmod +x /usr/local/bin/setupMariaDB.sh
 ENTRYPOINT [ "/usr/local/bin/setupMariaDB.sh" ]
