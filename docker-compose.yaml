@@ -1,36 +1,62 @@
-services:
-  mariadb:
-    build:
-      context: ./srcs/requirements
-      dockerfile: mariadb/Dockerfile
-    container_name: mariadb
-    env_file:
-      - ./srcs/.env
-    secrets:
-      - db_password
-      - db_root_password
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    restart: unless-stopped
-
-  wordpress:
-    build:
-      context: ./srcs/requirements
-      dockerfile: wordpress/Dockerfile
-    container_name: wordpress
-    env_file:
-      - ./srcs/.env
-    secrets:
-      - db_password
-    depends_on:
-      - mariadb
-    restart: unless-stopped
+version: "3.5"
 
 volumes:
-  mariadb_data:
+        wordpress:
+                name: wordpress
+                driver: local
+                driver_opts:
+                        device: /Users/sahafid/Desktop/Inception/srcs/wordpress
+                        o: bind
+                        type: none
+        mariadb:
+                name: mariadb
+                driver: local
+                driver_opts:
+                        device: /Users/sahafid/Desktop/Inception/srcs/mariadb
+                        o: bind
+                        type: none
 
-secrets:
-  db_password:
-    file: ./secrets/db_password.txt
-  db_root_password:
-    file: ./secrets/db_root_password.txt
+networks:
+  inception:
+    name: inception
+
+services:
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx/.
+    image: nginx:42
+    ports:
+     - "443:443"
+    depends_on:
+      - wordpress
+    volumes:
+     - wordpress:/var/www/html
+    networks:
+      - inception
+    env_file:
+      - .env
+    restart: always
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress/.
+    image: wordpress:42
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress:/var/www/html
+    env_file:
+      - .env
+    networks:
+      - inception
+    restart: always
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb/.
+    image: mariadb:42
+    volumes:
+      - mariadb:/var/lib/mysql
+    env_file:
+      - .env
+    networks:
+      - inception
+    restart: always
