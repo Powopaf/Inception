@@ -37,11 +37,12 @@ wp plugin install redis-cache --activate --allow-root
 wp plugin update --all --allow-root
 
  
-sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/g' /etc/php/7.3/fpm/pool.d/www.conf
+PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')
+sed -i "s#listen = .*#listen = 9000#" "/etc/php/$PHP_VERSION/fpm/pool.d/www.conf"
 
 mkdir /run/php
 
 
 wp redis enable --allow-root
 
-/usr/sbin/php-fpm7.3 -F
+/usr/sbin/php-fpm$PHP_VERSION -F

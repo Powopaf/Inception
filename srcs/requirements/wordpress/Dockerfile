@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:trixie-slim
 
 
 RUN apt update -y 
@@ -8,8 +8,9 @@ RUN apt install php-fpm php-mysql -y
 RUN apt install curl -y
 
 
-COPY ./tools/script.sh /
-COPY ./tools/wp-config.php /
+COPY ./tools/setupWP.sh /script.sh
+COPY ./tools/wp_conf.php /wp-config.php
+RUN chmod +x /script.sh
 
 EXPOSE 9000
 
