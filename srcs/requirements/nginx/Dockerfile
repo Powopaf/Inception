@@ -1,4 +1,4 @@
-FROM debian:trixie-slim
+FROM debian:bookworm-slim
 
 RUN apt -y update && apt install -y nginx && apt install openssl -y
 

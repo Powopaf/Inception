@@ -5,9 +5,10 @@ chown -R mysql:mysql /var/log/mysql /run/mysqld
 
 mysqld --user=mysql --skip-networking &
 
-until mysqladmin --protocol=socket ping >/dev/null 2>&1; do
-	sleep 1
-done
+if ! mysqladmin --protocol=socket --wait=30 ping >/dev/null 2>&1; then
+	echo "MariaDB did not become ready within 30 seconds" >&2
+	exit 1
+fi
 
 echo "CREATE DATABASE IF NOT EXISTS $db1_name ;" > db1.sql
 echo "CREATE OR REPLACE USER '$db1_user'@'%' IDENTIFIED BY '$db1_pwd' ;" >> db1.sql

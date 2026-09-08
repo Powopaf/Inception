@@ -1,4 +1,4 @@
-FROM debian:trixie-slim
+FROM debian:bookworm-slim
 
 RUN apt-get -y update \
   && apt-get -y upgrade \

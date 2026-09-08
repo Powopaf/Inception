@@ -1,8 +1,18 @@
 volumes:
-        wordpress:
-                name: wordpress
-        mariadb:
-                name: mariadb
+  wordpress:
+    name: wordpress
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/pifourni/data/wordpress
+  mariadb:
+    name: mariadb
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/pifourni/data/mariadb
 
 networks:
   inception:
@@ -12,11 +22,12 @@ services:
   nginx:
     container_name: nginx
     build: ./srcs/requirements/nginx/.
-    image: nginx:42
+    image: nginx:1.0
     ports:
      - "443:443"
     depends_on:
-      - wordpress
+      wordpress:
+        condition: service_healthy
     volumes:
      - wordpress:/var/www/html
     networks:
@@ -27,10 +38,9 @@ services:
   wordpress:
     container_name: wordpress
     build: ./srcs/requirements/wordpress/.
-    image: wordpress:42
+    image: wordpress:1.0
     depends_on:
       - mariadb
-      - redis
     volumes:
       - wordpress:/var/www/html
     env_file:
@@ -38,16 +48,16 @@ services:
     networks:
       - inception
     restart: always
-  redis:
-    container_name: redis
-    image: redis:7-alpine
-    networks:
-      - inception
-    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "php -r '$$socket = @fsockopen(\"127.0.0.1\", 9000); exit($$socket ? 0 : 1);'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
   mariadb:
     container_name: mariadb
     build: ./srcs/requirements/mariadb/.
-    image: mariadb:42
+    image: mariadb:1.0
     volumes:
       - mariadb:/var/lib/mysql
     env_file:
